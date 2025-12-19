@@ -4,12 +4,12 @@ A lightweight utility to compose React providers into a clean, configurable stac
 
 ## Features
 
-- 🚀 **Lightweight**: Minimal bundle size with zero runtime dependencies
-- 🔧 **Flexible**: Support for wrapping and standalone providers
-- 📦 **Type Safe**: Full TypeScript support
-- ⚡ **Simple API**: Clean syntax for provider composition
-- 🎯 **Order Control**: Maintain full control over provider nesting order
-- 🧩 **Two Provider Types**: Wrapping providers (wrap children) and standalone providers (sibling to children)
+- **Lightweight**: Minimal bundle size with zero runtime dependencies
+- **Flexible**: Support for wrapping and standalone providers
+- **Type Safe**: Full TypeScript support
+- **Simple API**: Clean syntax for provider composition
+- **Order Control**: Maintain full control over provider nesting order
+- **Two Provider Types**: Wrapping providers (wrap children) and standalone providers (sibling to children)
 
 ## Installation
 
@@ -41,10 +41,10 @@ When building React applications, you often need multiple context providers (The
 With `@beluga-labs/react-provider-stack`, you can compose all providers into a clean, declarative array:
 
 ```tsx
-import { ProviderStack, standalone } from '@beluga-labs/react-provider-stack';
+import { ProviderStack, standalone, ProviderDefinition } from '@beluga-labs/react-provider-stack';
 
 // With ProviderStack - clean and maintainable
-const providers = [
+const providers: ProviderDefinition[] = [
   // Wrapping providers (wrap children)
   [ThemeProvider, { theme: 'dark' }],
   [AuthProvider, { session }],
@@ -67,13 +67,13 @@ const providers = [
 Import `ProviderStack` and define your providers as an array:
 
 ```tsx
-import { ProviderStack, standalone } from '@beluga-labs/react-provider-stack';
+import { ProviderStack, standalone, ProviderDefinition } from '@beluga-labs/react-provider-stack';
 import { ThemeProvider } from './providers/ThemeProvider';
 import { AuthProvider } from './providers/AuthProvider';
 import { ToastContainer } from './providers/ToastContainer';
 
 function App() {
-  const providers = [
+  const providers: ProviderDefinition[] = [
     // Wrapping providers
     [ThemeProvider, { theme: 'dark' }],
     [AuthProvider, { session }],
@@ -209,7 +209,7 @@ This is equivalent to `FeatureProvider` or `[FeatureProvider]`.
 Here's a complete example showing all provider types:
 
 ```tsx
-import { ProviderStack, standalone } from '@beluga-labs/react-provider-stack';
+import { ProviderStack, standalone, ProviderDefinition } from '@beluga-labs/react-provider-stack';
 import { ThemeProvider } from './providers/ThemeProvider';
 import { UserProvider } from './providers/UserProvider';
 import { FeatureProvider } from './providers/FeatureProvider';
@@ -217,7 +217,7 @@ import { ToastContainer } from './components/ToastContainer';
 import { ShortcutHint } from './components/ShortcutHint';
 
 function App() {
-  const providers = [
+  const providers: ProviderDefinition[] = [
     // WRAPPING PROVIDERS - wrap the children
     [ThemeProvider, { theme: 'dark' }], // With props
     [UserProvider, { name: 'John Doe' }], // With props
@@ -323,20 +323,20 @@ export default function RootLayout({ children }) {
 Use `combineProviders` to organize providers by concern:
 
 ```tsx
-import { combineProviders, ProviderStack, standalone } from '@beluga-labs/react-provider-stack';
+import { combineProviders, ProviderStack, standalone, ProviderDefinition } from '@beluga-labs/react-provider-stack';
 
 // Organize providers by concern
-const coreProviders = [
+const coreProviders: ProviderDefinition[] = [
   [ThemeProvider, { theme }],
   [I18nProvider, { locale }],
 ];
 
-const dataProviders = [
+const dataProviders: ProviderDefinition[] = [
   [QueryClientProvider, { client: queryClient }],
   [AuthProvider, { session }],
 ];
 
-const uiProviders = [
+const uiProviders: ProviderDefinition[] = [
   standalone(ToastContainer, { position: 'top-right' }),
   standalone(ModalPortal),
 ];
@@ -357,35 +357,49 @@ This package works with any React framework. Here are examples for popular frame
 
 #### App Router (Next.js 13+)
 
-```tsx
-// app/layout.tsx
-import { ProviderStack } from '@beluga-labs/react-provider-stack';
+With the App Router, provider definitions must be in a Client Component since functions cannot be passed from Server to Client Components.
 
-const providers = [
+```tsx
+// app/providers.tsx
+'use client';
+
+import { createProviderStack, ProviderDefinition } from '@beluga-labs/react-provider-stack';
+import { ThemeProvider } from './providers/ThemeProvider';
+import { QueryClientProvider, queryClient } from './providers/QueryClientProvider';
+import { FeatureProvider } from './providers/FeatureProvider';
+
+const providers: ProviderDefinition[] = [
   [ThemeProvider, { theme: 'dark' }],
   [QueryClientProvider, { client: queryClient }],
   FeatureProvider,
 ];
 
+export const AppProviders = createProviderStack(providers);
+```
+
+```tsx
+// app/layout.tsx
+import { AppProviders } from './providers';
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <ProviderStack providers={providers}>{children}</ProviderStack>
+        <AppProviders>{children}</AppProviders>
       </body>
     </html>
   );
 }
 ```
 
-### Pages Router
+#### Pages Router
 
 ```tsx
 // pages/_app.tsx
-import { ProviderStack } from '@beluga-labs/react-provider-stack';
+import { ProviderStack, ProviderDefinition } from '@beluga-labs/react-provider-stack';
 import type { AppProps } from 'next/app';
 
-const providers = [
+const providers: ProviderDefinition[] = [
   [ThemeProvider, { theme: 'dark' }],
   [QueryClientProvider, { client: queryClient }],
   FeatureProvider,
@@ -404,9 +418,9 @@ export default function App({ Component, pageProps }: AppProps) {
 
 ```tsx
 // app/root.tsx
-import { ProviderStack } from '@beluga-labs/react-provider-stack';
+import { ProviderStack, ProviderDefinition } from '@beluga-labs/react-provider-stack';
 
-const providers = [
+const providers: ProviderDefinition[] = [
   [ThemeProvider, { theme: 'dark' }],
   [QueryClientProvider, { client: queryClient }],
   FeatureProvider,
@@ -429,11 +443,11 @@ export default function App() {
 
 ```tsx
 // src/main.tsx or src/index.tsx
-import { ProviderStack } from '@beluga-labs/react-provider-stack';
+import { ProviderStack, ProviderDefinition } from '@beluga-labs/react-provider-stack';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 
-const providers = [
+const providers: ProviderDefinition[] = [
   [ThemeProvider, { theme: 'dark' }],
   [QueryClientProvider, { client: queryClient }],
   FeatureProvider,
@@ -452,10 +466,10 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 
 ```tsx
 // gatsby-browser.js or gatsby-ssr.js
-import { ProviderStack } from '@beluga-labs/react-provider-stack';
+import { ProviderStack, ProviderDefinition } from '@beluga-labs/react-provider-stack';
 import React from 'react';
 
-const providers = [
+const providers: ProviderDefinition[] = [
   [ThemeProvider, { theme: 'dark' }],
   [QueryClientProvider, { client: queryClient }],
   FeatureProvider,
@@ -471,9 +485,9 @@ export const wrapRootElement = ({ element }) => (
 Since this package is framework-agnostic, you can use it anywhere React components are used:
 
 ```tsx
-import { ProviderStack } from '@beluga-labs/react-provider-stack';
+import { ProviderStack, ProviderDefinition } from '@beluga-labs/react-provider-stack';
 
-const providers = [[ThemeProvider, { theme: 'dark' }], FeatureProvider];
+const providers: ProviderDefinition[] = [[ThemeProvider, { theme: 'dark' }], FeatureProvider];
 
 function App() {
   return (
@@ -494,8 +508,8 @@ The main component that wraps your application with multiple providers.
 
 | Prop      | Type                 | Required | Description                            |
 | --------- | -------------------- | -------- | -------------------------------------- |
-| providers | ProviderDefinition[] | ✅       | Array of providers (first = outermost) |
-| children  | ReactNode            | ❌       | Your application components            |
+| providers | ProviderDefinition[] | Yes      | Array of providers (first = outermost) |
+| children  | ReactNode            | No       | Your application components            |
 
 ### ProviderDefinition
 
