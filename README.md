@@ -363,46 +363,61 @@ With the App Router, provider definitions must be in a Client Component since fu
 // app/providers.tsx
 'use client';
 
-import { createProviderStack, ProviderDefinition } from '@beluga-labs/react-provider-stack';
+import { ProviderStack, standalone, ProviderDefinition } from '@beluga-labs/react-provider-stack';
 import { ThemeProvider } from './providers/ThemeProvider';
+import { AuthProvider, Session } from './providers/AuthProvider';
 import { QueryClientProvider, queryClient } from './providers/QueryClientProvider';
-import { FeatureProvider } from './providers/FeatureProvider';
+import { ToastContainer } from './components/ToastContainer';
 
-const providers: ProviderDefinition[] = [
-  [ThemeProvider, { theme: 'dark' }],
-  [QueryClientProvider, { client: queryClient }],
-  FeatureProvider,
-];
+interface AppProvidersProps {
+  children: React.ReactNode;
+  session: Session;
+}
 
-export const AppProviders = createProviderStack(providers);
+export const AppProviders = ({ children, session }: AppProvidersProps) => {
+  const providers: ProviderDefinition[] = [
+    [ThemeProvider, { theme: 'dark' }],
+    [AuthProvider, { session }],
+    [QueryClientProvider, { client: queryClient }],
+    standalone(ToastContainer, { position: 'top-right' }),
+  ];
+
+  return <ProviderStack providers={providers}>{children}</ProviderStack>;
+};
 ```
 
 ```tsx
 // app/layout.tsx
 import { AppProviders } from './providers';
+import { getSession } from './auth';
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const session = await getSession();
+
   return (
     <html lang="en">
       <body>
-        <AppProviders>{children}</AppProviders>
+        <AppProviders session={session}>{children}</AppProviders>
       </body>
     </html>
   );
 }
 ```
 
+This pattern allows you to pass dynamic data from Server Components (like user session, translations, etc.) to your Client Component providers.
+
 #### Pages Router
 
 ```tsx
 // pages/_app.tsx
-import { ProviderStack, ProviderDefinition } from '@beluga-labs/react-provider-stack';
+import { ProviderStack, standalone, ProviderDefinition } from '@beluga-labs/react-provider-stack';
 import type { AppProps } from 'next/app';
 
 const providers: ProviderDefinition[] = [
   [ThemeProvider, { theme: 'dark' }],
+  [AuthProvider, { session }],
   [QueryClientProvider, { client: queryClient }],
-  FeatureProvider,
+  standalone(ToastContainer, { position: 'top-right' }),
 ];
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -418,12 +433,13 @@ export default function App({ Component, pageProps }: AppProps) {
 
 ```tsx
 // app/root.tsx
-import { ProviderStack, ProviderDefinition } from '@beluga-labs/react-provider-stack';
+import { ProviderStack, standalone, ProviderDefinition } from '@beluga-labs/react-provider-stack';
 
 const providers: ProviderDefinition[] = [
   [ThemeProvider, { theme: 'dark' }],
+  [AuthProvider, { session }],
   [QueryClientProvider, { client: queryClient }],
-  FeatureProvider,
+  standalone(ToastContainer, { position: 'top-right' }),
 ];
 
 export default function App() {
@@ -443,14 +459,15 @@ export default function App() {
 
 ```tsx
 // src/main.tsx or src/index.tsx
-import { ProviderStack, ProviderDefinition } from '@beluga-labs/react-provider-stack';
+import { ProviderStack, standalone, ProviderDefinition } from '@beluga-labs/react-provider-stack';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 
 const providers: ProviderDefinition[] = [
   [ThemeProvider, { theme: 'dark' }],
+  [AuthProvider, { session }],
   [QueryClientProvider, { client: queryClient }],
-  FeatureProvider,
+  standalone(ToastContainer, { position: 'top-right' }),
 ];
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
@@ -466,13 +483,14 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 
 ```tsx
 // gatsby-browser.js or gatsby-ssr.js
-import { ProviderStack, ProviderDefinition } from '@beluga-labs/react-provider-stack';
+import { ProviderStack, standalone, ProviderDefinition } from '@beluga-labs/react-provider-stack';
 import React from 'react';
 
 const providers: ProviderDefinition[] = [
   [ThemeProvider, { theme: 'dark' }],
+  [AuthProvider, { session }],
   [QueryClientProvider, { client: queryClient }],
-  FeatureProvider,
+  standalone(ToastContainer, { position: 'top-right' }),
 ];
 
 export const wrapRootElement = ({ element }) => (
@@ -485,9 +503,14 @@ export const wrapRootElement = ({ element }) => (
 Since this package is framework-agnostic, you can use it anywhere React components are used:
 
 ```tsx
-import { ProviderStack, ProviderDefinition } from '@beluga-labs/react-provider-stack';
+import { ProviderStack, standalone, ProviderDefinition } from '@beluga-labs/react-provider-stack';
 
-const providers: ProviderDefinition[] = [[ThemeProvider, { theme: 'dark' }], FeatureProvider];
+const providers: ProviderDefinition[] = [
+  [ThemeProvider, { theme: 'dark' }],
+  [AuthProvider, { session }],
+  [QueryClientProvider, { client: queryClient }],
+  standalone(ToastContainer, { position: 'top-right' }),
+];
 
 function App() {
   return (

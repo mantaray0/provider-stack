@@ -1,6 +1,6 @@
 {
   "name": "@beluga-labs/react-provider-stack",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "type": "module",
   "description": "Compose React providers into a clean, configurable stack",
   "main": "dist/index.js",
