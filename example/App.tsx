@@ -127,7 +127,7 @@ const DemoContent = () => {
       {/* Header */}
       <header className="header">
         <h1 className="header__title">ProviderStack Example</h1>
-        <span className="header__package">@beluga-labs/react-provider-stack</span>
+        <span className="header__package">@beluga-labs/provider-stack</span>
       </header>
 
       {/* Theme Section */}
