@@ -1,6 +1,6 @@
 {
-  "name": "@beluga-labs/react-provider-stack",
-  "version": "0.1.2",
+  "name": "@beluga-labs/provider-stack",
+  "version": "0.2.0",
   "type": "module",
   "description": "Compose React providers into a clean, configurable stack",
   "main": "dist/index.js",
@@ -27,7 +27,7 @@
   },
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/beluga-labs/provider-stack"
   },
   "keywords": [
     "react",
@@ -43,7 +43,7 @@
     "react-framework"
   ],
   "bugs": {
-    "url": ""
+    "url": "https://github.com/beluga-labs/provider-stack/issues"
   },
   "author": "beluga labs",
   "license": "MIT",
@@ -70,5 +70,5 @@
     "react": ">=18.0.0",
     "react-dom": ">=18.0.0"
   },
-  "packageManager": "pnpm@10.14.0"
+  "packageManager": "pnpm@10.20.0"
 }
