@@ -26,9 +26,13 @@ const ThemeContext = createContext<ThemeContextValue>({
 
 const ThemeProvider = ({
   initialTheme = 'light',
+  enableSystem = false,
+  disableTransitionOnChange = false,
   children,
 }: {
   initialTheme?: Theme;
+  enableSystem?: boolean;
+  disableTransitionOnChange?: boolean;
   children?: ReactNode;
 }) => {
   const [theme, setTheme] = useState<Theme>(initialTheme);
@@ -164,6 +168,26 @@ describe('Wrapping Provider with Props', () => {
     expect(screen.getByTestId('theme-value').textContent).toBe('light');
 
     fireEvent.click(screen.getByTestId('theme-toggle'));
+
+    expect(screen.getByTestId('theme-value').textContent).toBe('dark');
+  });
+
+  it('handles boolean props correctly - must explicitly set to true', () => {
+    // In JSX you would write: <ThemeProvider enableSystem disableTransitionOnChange />
+    // In array syntax you must write: { enableSystem: true, disableTransitionOnChange: true }
+    const providers: ProviderDefinition[] = [
+      [ThemeProvider, { 
+        initialTheme: 'dark',
+        enableSystem: true,  // Must explicitly set to true
+        disableTransitionOnChange: true  // Must explicitly set to true
+      }] as ProviderDefinition,
+    ];
+
+    render(
+      <ProviderStack providers={providers}>
+        <ThemeConsumer />
+      </ProviderStack>
+    );
 
     expect(screen.getByTestId('theme-value').textContent).toBe('dark');
   });

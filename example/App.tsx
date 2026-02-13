@@ -19,9 +19,13 @@ const ThemeContext = createContext<ThemeContextValue>({
 
 const ThemeProvider = ({
   initialTheme = 'light',
+  enableSystem = false,
+  disableTransitionOnChange = false,
   children,
 }: {
   initialTheme?: Theme;
+  enableSystem?: boolean;
+  disableTransitionOnChange?: boolean;
   children?: ReactNode;
 }) => {
   const [theme, setTheme] = useState<Theme>(initialTheme);
@@ -127,7 +131,7 @@ const DemoContent = () => {
       {/* Header */}
       <header className="header">
         <h1 className="header__title">ProviderStack Example</h1>
-        <span className="header__package">@beluga-labs/provider-stack</span>
+        <span className="header__package">@mantaray0/provider-stack</span>
       </header>
 
       {/* Theme Section */}
@@ -191,7 +195,12 @@ standalone(CounterBanner, { label: 'Count' }),  // after Counter`}</pre>
         <h2 className="section__title">Configuration</h2>
         <pre className="code-block">{`const providers = [
   // 1. Theme wraps everything
-  [ThemeProvider, { initialTheme: 'dark' }],
+  // Note: Boolean props must be explicitly set to true
+  [ThemeProvider, { 
+    initialTheme: 'dark',
+    enableSystem: true,  // Must write : true (not just enableSystem)
+    disableTransitionOnChange: true
+  }],
 
   // 2. Counter provides state
   CounterProvider,
@@ -215,7 +224,12 @@ standalone(CounterBanner, { label: 'Count' }),  // after Counter`}</pre>
 function App() {
   const providers: ProviderDefinition[] = [
     // 1. Wrapping provider WITH props
-    [ThemeProvider, { initialTheme: 'dark' }] as ProviderDefinition,
+    // Note: Boolean props must be explicitly set to true in array syntax
+    [ThemeProvider, { 
+      initialTheme: 'dark',
+      enableSystem: true,  // Must write : true (not just enableSystem)
+      disableTransitionOnChange: true
+    }] as ProviderDefinition,
 
     // 2. Wrapping provider WITHOUT props
     CounterProvider as ProviderDefinition,

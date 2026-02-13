@@ -1,4 +1,4 @@
-# @beluga-labs/provider-stack
+# @mantaray0/provider-stack
 
 A lightweight utility to compose React providers into a clean, configurable stack. Works with any React framework including Next.js, Remix, Gatsby, Vite, Create React App, and any other React-based application.
 
@@ -14,11 +14,11 @@ A lightweight utility to compose React providers into a clean, configurable stac
 ## Installation
 
 ```bash
-npm install @beluga-labs/provider-stack
+npm install @mantaray0/provider-stack
 # or
-pnpm add @beluga-labs/provider-stack
+pnpm add @mantaray0/provider-stack
 # or
-yarn add @beluga-labs/provider-stack
+yarn add @mantaray0/provider-stack
 ```
 
 ## What is this package?
@@ -38,10 +38,10 @@ When building React applications, you often need multiple context providers (The
 </ThemeProvider>
 ```
 
-With `@beluga-labs/provider-stack`, you can compose all providers into a clean, declarative array:
+With `@mantaray0/provider-stack`, you can compose all providers into a clean, declarative array:
 
 ```tsx
-import { ProviderStack, standalone, ProviderDefinition } from '@beluga-labs/provider-stack';
+import { ProviderStack, standalone, ProviderDefinition } from '@mantaray0/provider-stack';
 
 // With ProviderStack - clean and maintainable
 const providers: ProviderDefinition[] = [
@@ -67,7 +67,7 @@ const providers: ProviderDefinition[] = [
 Import `ProviderStack` and define your providers as an array:
 
 ```tsx
-import { ProviderStack, standalone, ProviderDefinition } from '@beluga-labs/provider-stack';
+import { ProviderStack, standalone, ProviderDefinition } from '@mantaray0/provider-stack';
 import { ThemeProvider } from './providers/ThemeProvider';
 import { AuthProvider } from './providers/AuthProvider';
 import { ToastContainer } from './providers/ToastContainer';
@@ -115,7 +115,7 @@ const providers = [
 Standalone providers are rendered as siblings to the children, like `<Provider />`. Use the `standalone()` helper:
 
 ```tsx
-import { standalone } from '@beluga-labs/provider-stack';
+import { standalone } from '@mantaray0/provider-stack';
 
 const providers = [
   // With props
@@ -145,6 +145,24 @@ const providers = [
 **Syntax:**
 
 - `[Component, { prop1: value1, prop2: value2 }]` - Component with props object
+
+**Important Note on Boolean Props:**
+
+When using boolean properties in the array syntax, you must explicitly set them to `true`. Unlike JSX where you can write `<ThemeProvider enableSystem />`, in the array syntax you need to write `enableSystem: true`:
+
+```tsx
+// In JSX (regular React):
+<ThemeProvider enableSystem disableTransitionOnChange otherProperty="value" />
+
+// In array syntax (ProviderStack):
+const providers = [
+  [ThemeProvider, { 
+    enableSystem: true,  // Must explicitly set to true
+    disableTransitionOnChange: true,  // Must explicitly set to true
+    otherProperty: "value" 
+  }]
+];
+```
 
 **Example:**
 
@@ -209,7 +227,7 @@ This is equivalent to `FeatureProvider` or `[FeatureProvider]`.
 Here's a complete example showing all provider types:
 
 ```tsx
-import { ProviderStack, standalone, ProviderDefinition } from '@beluga-labs/provider-stack';
+import { ProviderStack, standalone, ProviderDefinition } from '@mantaray0/provider-stack';
 import { ThemeProvider } from './providers/ThemeProvider';
 import { UserProvider } from './providers/UserProvider';
 import { FeatureProvider } from './providers/FeatureProvider';
@@ -301,7 +319,7 @@ Use `createProviderStack` to create a reusable provider stack:
 
 ```tsx
 // providers.tsx
-import { createProviderStack, standalone } from '@beluga-labs/provider-stack';
+import { createProviderStack, standalone } from '@mantaray0/provider-stack';
 
 export const AppProviders = createProviderStack([
   [ThemeProvider, { theme: 'dark' }],
@@ -328,7 +346,7 @@ import {
   ProviderStack,
   standalone,
   ProviderDefinition,
-} from '@beluga-labs/provider-stack';
+} from '@mantaray0/provider-stack';
 
 // Organize providers by concern
 const coreProviders: ProviderDefinition[] = [
@@ -368,7 +386,7 @@ With the App Router, provider definitions must be in a Client Component since fu
 // app/providers.tsx
 'use client';
 
-import { ProviderStack, standalone, ProviderDefinition } from '@beluga-labs/provider-stack';
+import { ProviderStack, standalone, ProviderDefinition } from '@mantaray0/provider-stack';
 import { ThemeProvider } from './providers/ThemeProvider';
 import { AuthProvider, Session } from './providers/AuthProvider';
 import { QueryClientProvider, queryClient } from './providers/QueryClientProvider';
@@ -415,7 +433,7 @@ This pattern allows you to pass dynamic data from Server Components (like user s
 
 ```tsx
 // pages/_app.tsx
-import { ProviderStack, standalone, ProviderDefinition } from '@beluga-labs/provider-stack';
+import { ProviderStack, standalone, ProviderDefinition } from '@mantaray0/provider-stack';
 import type { AppProps } from 'next/app';
 
 const providers: ProviderDefinition[] = [
@@ -438,7 +456,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
 ```tsx
 // app/root.tsx
-import { ProviderStack, standalone, ProviderDefinition } from '@beluga-labs/provider-stack';
+import { ProviderStack, standalone, ProviderDefinition } from '@mantaray0/provider-stack';
 
 const providers: ProviderDefinition[] = [
   [ThemeProvider, { theme: 'dark' }],
@@ -464,7 +482,7 @@ export default function App() {
 
 ```tsx
 // src/main.tsx or src/index.tsx
-import { ProviderStack, standalone, ProviderDefinition } from '@beluga-labs/provider-stack';
+import { ProviderStack, standalone, ProviderDefinition } from '@mantaray0/provider-stack';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 
@@ -488,7 +506,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 
 ```tsx
 // gatsby-browser.js or gatsby-ssr.js
-import { ProviderStack, standalone, ProviderDefinition } from '@beluga-labs/provider-stack';
+import { ProviderStack, standalone, ProviderDefinition } from '@mantaray0/provider-stack';
 import React from 'react';
 
 const providers: ProviderDefinition[] = [
@@ -508,7 +526,7 @@ export const wrapRootElement = ({ element }) => (
 Since this package is framework-agnostic, you can use it anywhere React components are used:
 
 ```tsx
-import { ProviderStack, standalone, ProviderDefinition } from '@beluga-labs/provider-stack';
+import { ProviderStack, standalone, ProviderDefinition } from '@mantaray0/provider-stack';
 
 const providers: ProviderDefinition[] = [
   [ThemeProvider, { theme: 'dark' }],
@@ -561,7 +579,7 @@ type ProviderDefinition = WrapperDef | StandaloneDef
 Helper function to create a standalone provider definition:
 
 ```tsx
-import { standalone } from '@beluga-labs/provider-stack';
+import { standalone } from '@mantaray0/provider-stack';
 
 // Without props
 standalone(ToastContainer);
@@ -601,7 +619,7 @@ const allProviders = combineProviders(coreProviders, dataProviders, standalonePr
 Full TypeScript support is included:
 
 ```tsx
-import { ProviderDefinition, standalone } from '@beluga-labs/provider-stack';
+import { ProviderDefinition, standalone } from '@mantaray0/provider-stack';
 
 const providers: ProviderDefinition[] = [
   // Wrapping providers
@@ -613,6 +631,31 @@ const providers: ProviderDefinition[] = [
   standalone(ShortcutHint),
 ];
 ```
+
+## Migration
+
+This package was previously published under different names. If you are migrating from an older version, update your package name and imports:
+
+| Old package name | New package name |
+|---|---|
+| `@beluga-labs/provider-stack` | `@mantaray0/provider-stack` |
+
+```bash
+# Remove the old package
+npm uninstall @beluga-labs/provider-stack
+
+# Install the new package
+npm install @mantaray0/provider-stack
+```
+
+Then update all imports:
+
+```diff
+- import { ProviderStack, standalone } from '@beluga-labs/provider-stack';
++ import { ProviderStack, standalone } from '@mantaray0/provider-stack';
+```
+
+The API remains unchanged — no code changes beyond the import paths are required.
 
 ## Contributing
 
