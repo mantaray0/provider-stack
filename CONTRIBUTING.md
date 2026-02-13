@@ -1,4 +1,4 @@
-# Contributing to @beluga-labs/provider-stack
+# Contributing to @mantaray0/provider-stack
 
 Thank you for your interest in contributing! This document provides guidelines and instructions for contributing.
 
